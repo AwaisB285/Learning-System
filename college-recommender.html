@@ -1,0 +1,426 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EduPath AI | College Recommender</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f3f6fc;color:#1f2937;line-height:1.6}
+header{background:linear-gradient(135deg,#142b62,#3159b8);color:white;padding:25px 7%}
+header h1{font-size:28px}
+header p{color:#e1e9ff}
+.container{width:92%;max-width:950px;margin:30px auto}
+.intro{margin-bottom:22px}
+.intro h2,.section-title{color:#173575}
+.intro h2{margin-bottom:7px}
+.card{background:white;padding:28px;border-radius:14px;box-shadow:0 5px 22px #142b6212;margin-bottom:24px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.field{display:flex;flex-direction:column;gap:6px}
+.full{grid-column:1/-1}
+label{font-weight:600;font-size:14px}
+input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:7px;font-size:15px;background:white}
+input:focus,select:focus{outline:2px solid #9bb9ff;border-color:#3159b8}
+.help{font-size:12px;color:#64748b}
+.section-title{font-size:18px;margin:25px 0 15px;padding-bottom:8px;border-bottom:1px solid #e5eaf3}
+.hidden{display:none!important}
+button{width:100%;margin-top:24px;border:0;border-radius:8px;padding:14px;color:white;background:#2453b8;font-size:16px;font-weight:bold;cursor:pointer}
+button:hover{background:#173575}
+button:disabled{opacity:.65;cursor:wait}
+.notice{background:#fff8e6;border:1px solid #f3d58b;color:#6c4b0a;border-radius:8px;padding:13px;font-size:13px;margin-top:20px}
+#message{display:none;margin-top:18px;padding:12px;border-radius:7px;overflow-wrap:anywhere}
+#results{display:none}
+.result-card{border:1px solid #dce5f5;border-radius:10px;padding:17px;margin-top:14px}
+.result-card h3{color:#173575;margin-bottom:7px}
+.status{display:inline-block;background:#edf3ff;color:#214995;padding:4px 9px;border-radius:5px;font-size:12px;margin-top:8px}
+.small-note{font-size:13px;color:#64748b;margin-top:12px}
+footer{text-align:center;padding:22px;color:#64748b;font-size:13px}
+@media(max-width:650px){header{padding:22px 5%}.container{width:94%;margin-top:20px}.card{padding:19px}.grid{grid-template-columns:1fr}.full{grid-column:auto}}
+</style>
+</head>
+
+<body>
+<header>
+    <h1>EduPath AI</h1>
+    <p>Intelligent Academic Guidance & College Recommendation</p>
+</header>
+
+<main class="container">
+    <div class="intro">
+        <h2>Find Your Suitable Colleges</h2>
+        <p>Enter your academic information and entrance-exam details to explore colleges matching your profile.</p>
+    </div>
+
+    <form id="collegeForm" class="card">
+        <h3 class="section-title" style="margin-top:0">1. Student Information</h3>
+
+        <div class="grid">
+            <div class="field">
+                <label for="studentName">Full Name (optional)</label>
+                <input id="studentName" type="text" maxlength="100" placeholder="Enter your name">
+            </div>
+
+            <div class="field">
+                <label for="board">Class 12 Board *</label>
+                <select id="board" required>
+                    <option value="">Select board</option>
+                    <option value="WBCHSE">West Bengal Board (WBCHSE)</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="ISC">ISC</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="course">Preferred Course *</label>
+                <select id="course" required>
+                    <option value="">Select course</option>
+                    <option value="B.Tech">B.Tech — Engineering</option>
+                    <option value="B.Com">B.Com — Commerce</option>
+                    <option value="B.A">B.A. — Arts and Humanities</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="category">Admission Category (optional)</label>
+                <select id="category">
+                    <option value="">Prefer not to specify</option>
+                    <option value="General">General</option>
+                    <option value="EWS">EWS</option>
+                    <option value="OBC-A">OBC-A</option>
+                    <option value="OBC-B">OBC-B</option>
+                    <option value="SC">SC</option>
+                    <option value="ST">ST</option>
+                    <option value="Other">Other / applicable category</option>
+                </select>
+                <span class="help">Actual category eligibility must be verified for each institution.</span>
+            </div>
+        </div>
+
+        <h3 class="section-title">2. Academic Marks</h3>
+
+        <div class="grid">
+            <div class="field" id="aggregateField">
+                <label for="aggregate">Class 12 Overall Percentage *</label>
+                <input id="aggregate" type="number" min="0" max="100" step="0.01" placeholder="e.g. 85.50" required>
+                <span class="help">Enter the overall percentage shown by your board.</span>
+            </div>
+
+            <div class="field hidden" id="pcmField">
+                <label for="pcm">Class 12 PCM Percentage *</label>
+                <input id="pcm" type="number" min="0" max="100" step="0.01" placeholder="Physics, Chemistry, Mathematics">
+                <span class="help">Enter the percentage calculated according to the relevant admission rules.</span>
+            </div>
+
+            <div class="field">
+                <label for="class10">Class 10 Percentage (optional)</label>
+                <input id="class10" type="number" min="0" max="100" step="0.01" placeholder="e.g. 80">
+            </div>
+
+            <div class="field">
+                <label for="passingYear">Class 12 Passing Year (optional)</label>
+                <select id="passingYear">
+                    <option value="">Select year</option>
+                    <option>2022</option><option>2023</option><option>2024</option>
+                    <option>2025</option><option>2026</option><option>2027</option>
+                    <option>Other</option>
+                </select>
+            </div>
+        </div>
+
+        <h3 class="section-title">3. Entrance Examination Details</h3>
+        <p class="help">Choose your course first. The available exam options will update automatically. If you have not taken an exam, select that option.</p>
+
+        <div class="grid" style="margin-top:15px">
+            <div class="field">
+                <label for="entranceExam">Entrance Examination</label>
+                <select id="entranceExam">
+                    <option value="None">No entrance exam / Not taken</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="examStatus">Examination Status</label>
+                <select id="examStatus">
+                    <option value="Not taken">Not taken</option>
+                    <option value="Registered">Registered / Awaiting exam</option>
+                    <option value="Appeared">Appeared / Awaiting result</option>
+                    <option value="Qualified">Qualified</option>
+                    <option value="Not qualified">Not qualified</option>
+                </select>
+            </div>
+
+            <div class="field hidden" id="rankField">
+                <label for="examRank">Entrance Exam Rank (optional)</label>
+                <input id="examRank" type="number" min="1" step="1" placeholder="Enter your rank">
+                <span class="help">Enter the rank for the selected examination, not your marks.</span>
+            </div>
+
+            <div class="field hidden" id="scoreField">
+                <label for="examScore">Entrance Exam Score (optional)</label>
+                <input id="examScore" type="number" min="0" step="0.01" placeholder="Enter score">
+                <span class="help">Use the score reported on your result. Leave blank if unavailable.</span>
+            </div>
+
+            <div class="field full">
+                <label for="otherExam">Other Exam Name (if applicable)</label>
+                <input id="otherExam" type="text" maxlength="100" placeholder="Enter exam name if you selected Other">
+            </div>
+        </div>
+
+        <div class="notice">
+            <strong>Important:</strong> Not every college uses an entrance exam. Exam requirements, eligible subjects, category rules, cutoffs and admission procedures vary by college, course and academic year. Recommendations are estimates and do not guarantee admission.
+        </div>
+
+        <button id="submitButton" type="submit">Find Recommended Colleges</button>
+        <div id="message" role="status" aria-live="polite"></div>
+    </form>
+
+    <section id="results" class="card" aria-live="polite">
+        <h2 style="color:#173575">Your College Recommendations</h2>
+        <p id="resultSummary"></p>
+        <div id="resultList"></div>
+        <p class="small-note">Always verify eligibility and admission details on the institution's official website.</p>
+    </section>
+</main>
+
+<footer>EduPath AI — Bridging Academic Performance and Higher Education Planning</footer>
+
+<script>
+const API_URL = "http://127.0.0.1:8000/recommend-colleges";
+
+const $ = id => document.getElementById(id);
+const form = $("collegeForm");
+const course = $("course");
+const exam = $("entranceExam");
+const status = $("examStatus");
+const rankField = $("rankField");
+const scoreField = $("scoreField");
+const rankInput = $("examRank");
+const scoreInput = $("examScore");
+const otherExam = $("otherExam");
+const message = $("message");
+const results = $("results");
+const resultList = $("resultList");
+const submitButton = $("submitButton");
+
+const examOptions = {
+    "B.Tech": [
+        ["WBJEE", "WBJEE"],
+        ["JEE Main", "JEE Main"],
+        ["Other", "Other entrance examination"]
+    ],
+    "B.Com": [
+        ["CUET-UG", "CUET-UG (where accepted)"],
+        ["College-specific", "College-specific entrance exam"],
+        ["Other", "Other entrance examination"]
+    ],
+    "B.A": [
+        ["Presidency University admission test", "Presidency University admission test (verify current process)"],
+        ["CUET-UG", "CUET-UG (where accepted)"],
+        ["College-specific", "College-specific entrance exam"],
+        ["Other", "Other entrance examination"]
+    ]
+};
+
+function updateExamOptions() {
+    const previous = exam.value;
+    exam.replaceChildren();
+
+    const noExam = document.createElement("option");
+    noExam.value = "None";
+    noExam.textContent = "No entrance exam / Not taken";
+    exam.appendChild(noExam);
+
+    (examOptions[course.value] || []).forEach(([value, label]) => {
+        const option = document.createElement("option");
+        option.value = value;
+        option.textContent = label;
+        exam.appendChild(option);
+    });
+
+    if ([...exam.options].some(option => option.value === previous)) {
+        exam.value = previous;
+    } else {
+        exam.value = "None";
+    }
+
+    updateExamFields();
+}
+
+function updateCourseFields() {
+    const engineering = course.value === "B.Tech";
+    $("pcmField").classList.toggle("hidden", !engineering);
+    $("aggregateField").classList.toggle("hidden", engineering);
+    $("aggregate").required = !engineering;
+    $("pcm").required = engineering;
+
+    if (!engineering) $("pcm").value = "";
+    else $("aggregate").value = "";
+
+    updateExamOptions();
+}
+
+function updateExamFields() {
+    const selected = exam.value;
+    const hasExam = selected !== "None";
+
+    rankField.classList.toggle("hidden", !hasExam);
+    scoreField.classList.toggle("hidden", !hasExam);
+
+    if (!hasExam) {
+        rankInput.value = "";
+        scoreInput.value = "";
+        status.value = "Not taken";
+        otherExam.value = "";
+    }
+
+    otherExam.parentElement.classList.toggle("hidden", selected !== "Other");
+}
+
+course.addEventListener("change", updateCourseFields);
+exam.addEventListener("change", updateExamFields);
+updateCourseFields();
+
+function showMessage(text, isError = true) {
+    message.style.display = "block";
+    message.textContent = text;
+    message.style.background = isError ? "#fff0f0" : "#edf9f0";
+    message.style.color = isError ? "#9b1c1c" : "#166534";
+    message.style.border = isError ? "1px solid #f2b8b8" : "1px solid #b8e3c1";
+}
+
+function addText(parent, tag, text, className = "") {
+    const el = document.createElement(tag);
+    el.textContent = text;
+    if (className) el.className = className;
+    parent.appendChild(el);
+    return el;
+}
+
+function displayResults(data) {
+    resultList.replaceChildren();
+
+    const colleges = Array.isArray(data.recommendations) ? data.recommendations : [];
+    $("resultSummary").textContent = colleges.length + " matching college(s) returned.";
+
+    if (colleges.length === 0) {
+        addText(resultList, "p",
+            "No colleges matched these inputs in the current dataset. Check official requirements or explore more colleges.");
+    }
+
+    colleges.forEach(college => {
+        const card = document.createElement("article");
+        card.className = "result-card";
+        addText(card, "h3", college.college || "College");
+
+        if (college.course) addText(card, "p", "Course: " + college.course);
+        if (college.minimum_marks_required !== undefined)
+            addText(card, "p", "Minimum marks listed: " + college.minimum_marks_required + "%");
+        if (college.estimated_wbjee_rank_range)
+            addText(card, "p", "Estimated WBJEE rank range: " + college.estimated_wbjee_rank_range);
+        if (college.entrance_requirement)
+            addText(card, "p", "Entrance requirement: " + college.entrance_requirement);
+
+        addText(card, "span",
+            college.status || "Verify official admission requirements.",
+            "status");
+        resultList.appendChild(card);
+    });
+
+    if (data.notice) addText(resultList, "p", data.notice, "small-note");
+
+    results.style.display = "block";
+    results.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+form.addEventListener("submit", async event => {
+    event.preventDefault();
+    message.style.display = "none";
+    results.style.display = "none";
+
+    if (!form.reportValidity()) return;
+
+    const selectedCourse = course.value;
+    const isEngineering = selectedCourse === "B.Tech";
+    const marks = Number(isEngineering ? $("pcm").value : $("aggregate").value);
+
+    if (!Number.isFinite(marks) || marks < 0 || marks > 100) {
+        showMessage("Enter a valid percentage between 0 and 100.");
+        return;
+    }
+
+    const class10Value = $("class10").value;
+    if (class10Value !== "" && (Number(class10Value) < 0 || Number(class10Value) > 100)) {
+        showMessage("Class 10 percentage must be between 0 and 100.");
+        return;
+    }
+
+    if (rankInput.value && Number(rankInput.value) < 1) {
+        showMessage("Entrance rank must be a positive number.");
+        return;
+    }
+
+    if (scoreInput.value && Number(scoreInput.value) < 0) {
+        showMessage("Entrance score cannot be negative.");
+        return;
+    }
+
+    if (exam.value === "Other" && !otherExam.value.trim()) {
+        showMessage("Please enter the name of your other entrance examination.");
+        return;
+    }
+
+    const payload = {
+        student_name: $("studentName").value.trim() || null,
+        board: $("board").value,
+        course: selectedCourse,
+        marks: marks,
+        aggregate_percentage: isEngineering ? null : marks,
+        pcm_percentage: isEngineering ? marks : null,
+        class10_percentage: class10Value === "" ? null : Number(class10Value),
+        passing_year: $("passingYear").value || null,
+        category: $("category").value || null,
+        entrance_exam: exam.value === "Other"
+            ? otherExam.value.trim()
+            : exam.value,
+        entrance_status: status.value,
+        rank: rankInput.value ? Number(rankInput.value) : null,
+        entrance_score: scoreInput.value ? Number(scoreInput.value) : null
+    };
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Finding Colleges...";
+
+    try {
+        const response = await fetch(API_URL, {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify(payload)
+        });
+
+        const data = await response.json().catch(() => ({}));
+
+        if (!response.ok) {
+            throw new Error(data.detail || data.error ||
+                "The server could not process your request.");
+        }
+        if (data.error) throw new Error(data.error);
+
+        displayResults(data);
+        showMessage("Recommendation request completed.", false);
+    } catch (error) {
+        showMessage(
+            "Could not retrieve recommendations. The FastAPI backend must be running " +
+            "and must include the /recommend-colleges endpoint. Details: " + error.message
+        );
+    } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = "Find Recommended Colleges";
+    }
+});
+</script>
+</body>
+</html>
