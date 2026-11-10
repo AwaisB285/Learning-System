@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Your Account | EduPath AI</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <main class="login-page">
+
+        <!-- Left Branding Panel -->
+        <section class="brand-panel">
+            <div class="brand">
+                <div class="brand-mark">A</div>
+                <span>EDUPATH AI</span>
+            </div>
+
+            <div class="brand-copy">
+                <p class="eyebrow">Your future, intelligently guided</p>
+
+                <h1>
+                    Start Your Journey.<br>
+                    <span>Build Your Future.</span>
+                </h1>
+
+                <p class="brand-description">
+                    AI-Powered Academic &amp; Career Pathway
+                    Recommendation System
+                </p>
+
+                <div class="short-line"></div>
+
+                <p class="brand-footer">
+                    Personalized guidance. Smarter decisions.
+                </p>
+            </div>
+
+            <div class="decor decor-circle-large"></div>
+            <div class="decor decor-pill"></div>
+            <div class="decor decor-circle-small"></div>
+            <div class="decor decor-ring"></div>
+            <div class="decor decor-cross">×</div>
+        </section>
+
+        <!-- Registration Form -->
+        <section class="form-panel">
+            <div class="form-wrap">
+
+                <h2>Create Your Account</h2>
+
+                <p class="form-subtitle">
+                    Join EduPath AI and discover your academic pathway.
+                </p>
+
+                <form id="registerForm" novalidate>
+
+                    <div class="field">
+                        <label for="fullName">Full Name</label>
+                        <input
+                            type="text"
+                            id="fullName"
+                            name="fullName"
+                            placeholder="Enter your full name"
+                            autocomplete="name"
+                            required
+                        >
+                        <small class="error" id="nameError"></small>
+                    </div>
+
+                    <div class="field">
+                        <label for="email">Email Address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="Enter your email"
+                            autocomplete="email"
+                            required
+                        >
+                        <small class="error" id="emailError"></small>
+                    </div>
+
+                    <div class="field">
+                        <label for="password">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <small class="error" id="passwordError"></small>
+                    </div>
+
+                    <div class="field">
+                        <label for="confirmPassword">Confirm Password</label>
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            placeholder="Re-enter your password"
+                            autocomplete="new-password"
+                            required
+                        >
+                        <small class="error" id="confirmError"></small>
+                    </div>
+
+                    <label class="remember-label terms-label">
+                        <input type="checkbox" id="terms">
+                        <span>I agree to the Terms &amp; Privacy Policy</span>
+                    </label>
+
+                    <small class="error" id="termsError"></small>
+
+                    <button type="submit" class="login-button">
+                        Create Account
+                    </button>
+
+                    <p class="status-message"
+                       id="statusMessage"
+                       role="status"
+                       aria-live="polite"></p>
+
+                </form>
+
+                <p class="signup-text">
+                    Already have an account?
+                    <a href="index.html">Login here</a>
+                </p>
+
+                <p class="demo-note">
+                    Your academic journey starts here.
+                </p>
+
+            </div>
+        </section>
+
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
