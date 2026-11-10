@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Exam Score Predictor | EduPath AI</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f4f7fb;
+      color: #182338;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: #111c35;
+      color: white;
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand span {
+      color: #73a7ff;
+    }
+
+    .topbar a {
+      color: #e5edff;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 38px auto;
+      padding: 0 20px;
+    }
+
+    .intro {
+      margin-bottom: 26px;
+    }
+
+    .eyebrow {
+      color: #2563eb;
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.4px;
+      margin-bottom: 10px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 4vw, 38px);
+      margin-bottom: 10px;
+    }
+
+    .intro p {
+      color: #64748b;
+      line-height: 1.7;
+      max-width: 700px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e3e9f2;
+      border-radius: 16px;
+      padding: 26px;
+      box-shadow: 0 8px 28px rgba(24, 35, 56, 0.04);
+    }
+
+    .card h2 {
+      font-size: 19px;
+      margin-bottom: 7px;
+    }
+
+    .subheading {
+      font-size: 13px;
+      color: #718096;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .field label {
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 12px 13px;
+      border: 1px solid #d7dfeb;
+      border-radius: 9px;
+      background: white;
+      color: #182338;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #3978ed;
+      box-shadow: 0 0 0 3px #3978ed20;
+    }
+
+    .hint {
+      color: #8490a3;
+      font-size: 11px;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .primary-btn {
+      width: 100%;
+      padding: 14px;
+      background: #2563eb;
+      color: white;
+      border: 0;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 24px;
+    }
+
+    .primary-btn:hover {
+      background: #1d4ed8;
+    }
+
+    .primary-btn:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    .result-card {
+      background: #111c35;
+      color: white;
+      border-radius: 16px;
+      padding: 25px;
+    }
+
+    .result-card h2 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .result-card > p {
+      color: #b9c7df;
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .result-placeholder {
+      margin-top: 25px;
+      padding: 23px 16px;
+      background: #1d2a46;
+      border: 1px solid #344362;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .result-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .result-placeholder strong {
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .result-placeholder p {
+      font-size: 12px;
+      color: #b9c7df;
+      line-height: 1.7;
+    }
+
+    .notice {
+      margin-top: 18px;
+      color: #8fa3c3;
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    #statusMessage {
+      margin-top: 16px;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    @media (max-width: 760px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        margin-top: 26px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .full-width {
+        grid-column: auto;
+      }
+
+      .card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">EduPath <span>AI</span></div>
+    <a href="index.html">Back to Login</a>
+  </header>
+
+  <main class="container">
+    <section class="intro">
+      <div class="eyebrow">Academic Performance</div>
+      <h1>Student Exam Score Predictor</h1>
+      <p>
+        Enter your study habits and academic information to explore
+        your expected examination performance and identify opportunities
+        to improve.
+      </p>
+    </section>
+
+    <div class="layout">
+      <section class="card">
+        <h2>Student Information</h2>
+        <p class="subheading">
+          Complete the fields below using your current routine and
+          previous academic results.
+        </p>
+
+        <form id="predictionForm">
+          <div class="form-grid">
+            <div class="field">
+              <label for="studyHours">Study hours per day</label>
+              <input id="studyHours" type="number"
+                min="0" max="24" step="0.5"
+                placeholder="e.g. 4.5" required>
+              <span class="hint">Between 0 and 24 hours</span>
+            </div>
+
+            <div class="field">
+              <label for="attendance">Attendance (%)</label>
+              <input id="attendance" type="number"
+                min="0" max="100" step="1"
+                placeholder="e.g. 85" required>
+              <span class="hint">Between 0 and 100%</span>
+            </div>
+
+            <div class="field">
+              <label for="previousScore">Previous exam score (%)</label>
+              <input id="previousScore" type="number"
+                min="0" max="100" step="0.1"
+                placeholder="e.g. 72" required>
+              <span class="hint">Your last examination result</span>
+            </div>
+
+            <div class="field">
+              <label for="sleepHours">Sleep hours per night</label>
+              <input id="sleepHours" type="number"
+                min="0" max="24" step="0.5"
+                placeholder="e.g. 7.5" required>
+              <span class="hint">Between 0 and 24 hours</span>
+            </div>
+
+            <div class="field">
+              <label for="mentalHealth">Well-being rating (1–10)</label>
+              <input id="mentalHealth" type="number"
+                min="1" max="10" step="1"
+                placeholder="e.g. 7" required>
+              <span class="hint">Your self-rated well-being</span>
+            </div>
+
+            <div class="field">
+              <label for="partTimeJob">Part-time job</label>
+              <select id="partTimeJob" required>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+
+            <div class="field full-width">
+              <label for="studyLevel">Current class / level</label>
+              <select id="studyLevel" required>
+                <option value="">Select your current level</option>
+                <option value="10">Class 10</option>
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+                <option value="college">College</option>
+              </select>
+            </div>
+          </div>
+
+          <button class="primary-btn" type="submit">
+            Predict My Exam Score
+          </button>
+
+          <p id="statusMessage" role="status" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <aside class="result-card">
+        <h2>Your Prediction</h2>
+        <p>
+          Your results will appear here after we connect the trained
+          prediction model.
+        </p>
+
+        <div class="result-placeholder">
+          <div class="result-icon">📊</div>
+          <strong>Ready when you are</strong>
+          <p>
+            Complete the student information form to prepare your
+            prediction request.
+          </p>
+        </div>
+
+        <p class="notice">
+          Predictions are estimates, not guaranteed examination results.
+          Your information will be used for academic guidance.
+        </p>
+      </aside>
+    </div>
+  </main>
+
+  
+<script>
+  const predictionForm = document.getElementById('predictionForm');
+  const statusMessage = document.getElementById('statusMessage');
+
+  predictionForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+
+    statusMessage.textContent = 'Connecting to EduPath AI...';
+
+    const submitButton = predictionForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+
+    const requestData = {
+      age: 18,
+      gender: "Male",
+      study_hours_per_day: Number(document.getElementById('studyHours').value),
+      social_media_hours: 2,
+      netflix_hours: 1,
+      part_time_job: document.getElementById('partTimeJob').value,
+      attendance_percentage: Number(document.getElementById('attendance').value),
+      sleep_hours: Number(document.getElementById('sleepHours').value),
+      diet_quality: "Good",
+      exercise_frequency: 3,
+      parental_education_level: "Bachelor's",
+      internet_quality: "Good",
+      mental_health_rating: Number(document.getElementById('mentalHealth').value),
+      extracurricular_participation: "Yes"
+    };
+
+    try {
+      const response = await fetch('http://127.0.0.1:8000/predict-exam-score', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          typeof result.detail === 'string'
+            ? result.detail
+            : JSON.stringify(result.detail || result)
+        );
+      }
+
+      document.querySelector('.result-placeholder').innerHTML = `
+        <div class="result-icon">📊</div>
+        <strong>Predicted Exam Score</strong>
+        <div style="font-size: 38px; font-weight: 700; margin: 12px 0;">
+          ${Number(result.predicted_exam_score).toFixed(2)}%
+        </div>
+        <p>${result.message}</p>
+      `;
+
+      statusMessage.textContent = 'Prediction completed successfully.';
+    } catch (error) {
+      statusMessage.textContent =
+        'Prediction failed: ' + error.message +
+        '. Check that the backend is running.';
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
+
+</body>
+</html>
